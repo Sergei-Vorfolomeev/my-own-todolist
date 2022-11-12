@@ -8,6 +8,15 @@
     background-color: aquamarine;
 }
 .isDone {
-    opacity: 0.5;
-    text-decoration: line-through;
+    opacity: 0.3;
+    /*text-decoration: line-through;*/
+}
+.todolist {
+    background-color: #adf1fc;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 2px 2px 10px darkgray;
+}
+.title {
+    text-align: center;
 }
