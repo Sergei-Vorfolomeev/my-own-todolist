@@ -69,7 +69,6 @@ function App() {
     const flipTasks = (todolistsID: string) => {
         setTasks({...tasks, [todolistsID]:tasks[todolistsID].reverse()})
     }
-
     return (
         <div className="App">
             {todolists.map(el => {

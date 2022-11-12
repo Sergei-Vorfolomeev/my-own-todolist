@@ -59,6 +59,7 @@ export const Todolist = (props: TodolistPropsType) => {
     const flipTasksHandler = () => {
         props.flipTasks(props.todolistsID)
     }
+
     return (
         <div>
             <h3 className={styles.title}>
