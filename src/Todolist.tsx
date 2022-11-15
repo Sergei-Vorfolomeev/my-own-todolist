@@ -1,6 +1,8 @@
 import React, {ChangeEvent, KeyboardEvent, useState} from "react";
 import styles from './Todolist.module.css'
 import {DataTasks, FilterValueType, TasksStateType} from "./App";
+import {Input} from "./components/Input";
+import EditableSpan from "./components/EditableSpan";
 
 type TaskType = {
     id: number
@@ -18,6 +20,8 @@ type TodolistPropsType = {
     flipTasks: (todolistsID: string) => void
     filter: FilterValueType
     deleteTodolist: (todolistsID: string) => void
+    updateTask: (todolistsID: string, taskID: string, updateTitle: string) => void
+    updateTodolist: (todolistsID: string, updateTitle: string) => void
 }
 
 export const Todolist = (props: TodolistPropsType) => {
@@ -59,13 +63,20 @@ export const Todolist = (props: TodolistPropsType) => {
     const flipTasksHandler = () => {
         props.flipTasks(props.todolistsID)
     }
+    const updateTodolistHandler = (updateTitle: string) => {
+        props.updateTodolist(props.todolistsID, updateTitle)
+    }
+    const updateTaskHandler = (taskID: string, updateTitle: string) => {
+        props.updateTask(props.todolistsID, taskID, updateTitle)
+    }
 
     return (
         <div>
             <h3 className={styles.title}>
-                {props.title}
+                <EditableSpan callBack={updateTodolistHandler} title={props.title}/>
                 <button onClick={deleteTodolistHandler}>Del</button>
             </h3>
+            {/*<Input callBack={props.addTask} todolistsID={props.todolistsID}/>*/}
             <div>
                 <input
                     placeholder={'Type new task'}
@@ -87,7 +98,10 @@ export const Todolist = (props: TodolistPropsType) => {
                                 onChange={(e) => onChangeCheckBoxHandler(el.id, e.currentTarget.checked)}
                                 type="checkbox"
                                 checked={el.isDone}/>
-                            <span>{el.title}</span>
+                            <EditableSpan
+                                callBack={(updateTitle) => updateTaskHandler(el.id, updateTitle)}
+                                title={el.title}
+                            />
                             <button onClick={() => onClickRemoveTaskHandler(el.id)}>X</button>
                         </li>
                     )
