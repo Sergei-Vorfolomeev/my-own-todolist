@@ -1,28 +1,22 @@
 import React, {useState} from 'react';
 import './App.css';
-import {Todolist} from "./Todolist";
+import {TaskPropsType, Todolist} from "./components/Todolist";
 import {v1} from "uuid";
-import {inspect} from "util";
-import styles from './Todolist.module.css'
 import {Input} from "./components/Input";
 
+
 export type FilterValueType = 'all' | 'active' | 'completed'
-export type TodolistsType = {
+
+type TodolistsType = {
     id: string
     title: string
     filter: FilterValueType
 }
-export type TasksStateType = {
-    [key: string]: DataTasks[]
-}
-export type DataTasks = {
-    id: string
-    title: string
-    isDone: boolean
+type TasksStateType = {
+    [key: string]: TaskPropsType[]
 }
 
 function App() {
-
     let todolistsID1 = v1()
     let todolistsID2 = v1()
 
@@ -51,40 +45,36 @@ function App() {
             {id: v1(), title: "Limes", isDone: false},
         ],
     })
-    const removeTask = (todolistsID: string, taskID: string) => {
-        setTasks({...tasks, [todolistsID]: tasks[todolistsID].filter(el => el.id !== taskID)})
+
+    const removeTask = (todolistID: string, taskID: string) => {
+        setTasks({...tasks, [todolistID]: tasks[todolistID].filter(el => el.id !== taskID)})
     }
-    const addTask = (todolistsID: string, newTitle: string) => {
+    const addTask = (todolistID: string, newTitle: string) => {
         const newTask = {id: v1(), title: newTitle, isDone: false}
-        setTasks({...tasks, [todolistsID]: [newTask, ...tasks[todolistsID]]})
+        setTasks({...tasks, [todolistID]: [newTask, ...tasks[todolistID]]})
     }
-    const changeFilter = (todolistsID: string, filterValue: FilterValueType) => {
-        setTodolists(todolists.map(el => el.id === todolistsID ? {...el, filter: filterValue} : el))
+    const changeFilter = (todolistID: string, filterValue: FilterValueType) => {
+        setTodolists(todolists.map(el => el.id === todolistID ? {...el, filter: filterValue} : el))
     }
-    const changeCheckBox = (todolistsID: string, taskID: string, checkBoxValue: boolean) => {
+    const changeCheckBox = (todolistID: string, taskID: string, checkBoxValue: boolean) => {
         setTasks({
             ...tasks,
-            [todolistsID]: tasks[todolistsID].map(el => el.id === taskID ? {...el, isDone: checkBoxValue} : el)
+            [todolistID]: tasks[todolistID].map(el => el.id === taskID ? {...el, isDone: checkBoxValue} : el)
         })
     }
-    const deleteTodolist = (todolistsID: string) => {
-        setTodolists(todolists.filter(el => el.id !== todolistsID))
+    const removeTodolist = (todolistID: string) => {
+        setTodolists(todolists.filter(el => el.id !== todolistID))
     }
-    const flipTasks = (todolistsID: string) => {
-        setTasks({...tasks, [todolistsID]: tasks[todolistsID].reverse()})
-    }
-    const updateTask = (todolistsID: string, taskID: string, updateTitle: string) => {
-        setTasks({
-            ...tasks,
-            [todolistsID]: tasks[todolistsID].map(el => el.id === taskID ? {...el, title: updateTitle} : el)
-        })
-    }
-    const updateTodolist = (todolistsID: string, updateTitle: string) => {
-        setTodolists(todolists.map(el => el.id === todolistsID ? {...el, title: updateTitle} : el))
+    const addTodolist = (newTitle: string) => {
+        const newTodoID = v1()
+        const newTodo: TodolistsType = {id: newTodoID, title: newTitle, filter: 'all'}
+        setTodolists([newTodo, ...todolists])
+        setTasks({...tasks, [newTodoID]:[]})
     }
 
     return (
         <div className="App">
+            <Input placeholder={'Type new todolist'} callBack={addTodolist}/>
             {todolists.map(el => {
                 let tasksForTodolist = tasks[el.id]
                 if (el.filter === 'active') {
@@ -94,23 +84,17 @@ function App() {
                     tasksForTodolist = tasks[el.id].filter(el => el.isDone)
                 }
                 return (
-                    <div className={styles.todolist}>
-                        <Todolist
-                            key={el.id}
-                            title={el.title}
-                            tasks={tasksForTodolist}
-                            todolistsID={el.id}
-                            removeTask={removeTask}
-                            addTask={addTask}
-                            changeFilter={changeFilter}
-                            changeCheckBox={changeCheckBox}
-                            flipTasks={flipTasks}
-                            filter={el.filter}
-                            deleteTodolist={deleteTodolist}
-                            updateTask={updateTask}
-                            updateTodolist={updateTodolist}
-                        />
-                    </div>
+                    <Todolist
+                        key={el.id}
+                        todolistID={el.id}
+                        title={el.title}
+                        tasks={tasksForTodolist}
+                        removeTask={removeTask}
+                        addTask={addTask}
+                        changeFilter={changeFilter}
+                        changeCheckBox={changeCheckBox}
+                        removeTodolist={removeTodolist}
+                    />
                 )
             })}
         </div>
